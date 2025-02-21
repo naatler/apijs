@@ -8,44 +8,40 @@ let users = [
     {id: 1, name: "Nadlar", email: "Nadlar@example.com"},
     {id: 2, name: "Muhammad", email: "Muhammad@example.com"},
     {id: 3, name: "Aditya", email: "Aditya@example.com"},
-  
 ];
 
-app.get("/api/users", (req, res)=> {
+app.get("/api/users", (req, res) => {
     res.json(users);
 });
 
 app.get("/api/users/:id", (req, res) => {
     const userId = parseInt(req.params.id);
-    const user = users.find((u)=> u.id === userId);
+    const user = users.find((u) => u.id === userId);
 
     if (!user) {
-        return res.status(404).json({ massage: "User not found"});
+        return res.status(404).json({ message: "User  not found" });
     }
 
     res.json(user);
 });
 
 app.post("/api/users", (req, res) => {
-    const {name, email } = req.body;
-    const newUser = {
+    const { name, email } = req.body;
+    const newUser  = {
         id: users.length + 1,
         name,
         email,
     };
 
-    users.push(newUser);
-    res.status(201).json(newUser);
+    users.push(newUser );
+    res.status(201).json(newUser );
 });
 
-app.put("/api/users/:id", (req,res) => {
+app.put("/api/users/:id", (req, res) => {
     const userId = parseInt(req.params.id);
-    const {name, email} = req.body;
+    const { name, email } = req.body;
 
-    let user = users.find((u) => u.id === userId );
-    if (!user) {
-        return res.status(404).json({ massage: "User not found"});
-    }
+    let user = users.find((u) => u.id === userId);
 
     user.name = name;
     user.email = email;
@@ -54,10 +50,15 @@ app.put("/api/users/:id", (req,res) => {
 });
 
 app.delete("/api/users/:id", (req, res) => { 
-    const userId = parsenInt(req.params.id);
-    users = users.filter((u) => u.id !== userId);
+    const userId = parseInt(req.params.id);
+    const user = users.find((u) => u.id === userId); 
 
-    res.status(204).send();
+    if (!user) {
+        return res.status(404).json({ message: "User  not found" }); 
+    }
+
+    users = users.filter((u) => u.id !== userId); 
+    res.status(204).send(); 
 });
 
 const PORT = process.env.PORT || 3000;
