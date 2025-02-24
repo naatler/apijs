@@ -1,0 +1,87 @@
+const express = require("express");
+
+const app = express();
+
+app.use(express.json());
+
+let users = [
+    { id: 1, name: "Nadlar", email: "Nadlar@example.com", kelas: 11, fakultas: "SMK Bpi Bandung", jurusan: "PPLG" },
+    { id: 2, name: "Muhammad", email: "Muhammad@example.com", kelas: 11, fakultas: "SMK Bpi Bandung", jurusan: "PPLG" },
+    { id: 3, name: "Aditya", email: "Aditya@example.com", kelas: 11, fakultas: "SMK Bpi Bandung", jurusan: "PPLG" },
+];
+
+app.get("/api/users", (req, res) => {
+    res.json(users);
+});
+
+app.get("/api/users/:id", (req, res) => {
+    const userId = parseInt(req.params.id);
+    const user = users.find((u) => u.id === userId);
+
+    if (!user) {
+        return res.status(404).json({ message: "User  not found" });
+    }
+
+    res.json(user);
+});
+
+app.post("/api/users", (req, res) => {
+    const { name, email, kelas, fakultas, jurusan } = req.body;
+
+    
+    if (!name || !email || !kelas || !fakultas || !jurusan) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const newUser  = {
+        id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1, // Menghasilkan ID baru
+        name,
+        email,
+        kelas,
+        fakultas,
+        jurusan,
+    };
+
+    users.push(newUser );
+    res.status(201).json(newUser );
+});
+
+app.put("/api/users/:id", (req, res) => {
+    const userId = parseInt(req.params.id);
+    const { name, email, kelas, fakultas, jurusan } = req.body;
+
+    let user = users.find((u) => u.id === userId);
+    if (!user) {
+        return res.status(404).json({ message: "User  not found" });
+    }
+
+    
+    if (!name || !email || !kelas || !fakultas || !jurusan) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    user.name = name;
+    user.email = email;
+    user.kelas = kelas;
+    user.fakultas = fakultas;
+    user.jurusan = jurusan;
+
+    res.json(user);
+});
+
+app.delete("/api/users/:id", (req, res) => {
+    const userId = parseInt(req.params.id);
+    const user = users.find((u) => u.id === userId);
+
+    if (!user) {
+        return res.status(404).json({ message: "User  not found" });
+    }
+
+    users = users.filter((u) => u.id !== userId);
+    res.status(204).send();
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server berjalan di http://localhost:${PORT}`);
+});
